@@ -1,14 +1,13 @@
-import { CssBaseline, Container, Typography } from '@mui/material'; //G: only CssBaseline, Container, Typography out of all mui.
+import { CssBaseline } from '@mui/material';
+import Board from './components/Board';
 
 function App() {
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="lg" sx={{ paddingY: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Kanban Board
-        </Typography>
-      </Container>
+      <Board />
     </>
   );
 }
+
+export default App;
