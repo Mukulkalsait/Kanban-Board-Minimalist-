@@ -63,7 +63,6 @@ function App() {
                       </Draggable>
                     ))}
 
-                    {/* This placeholder is required for proper spacing during drag */}
                     {provided.placeholder}
                   </Paper>
                 )}
