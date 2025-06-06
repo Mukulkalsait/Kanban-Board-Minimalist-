@@ -1,7 +1,7 @@
 1_SpecialFiles/*
 *.bkp
-
-
+*.explanation.tsx
+*.explanation.ts
 
 logs
 *.log
