@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { CssBaseline, Container, Typography, Box, Paper } from '@mui/material';
-import { DndContext, closestCenter, useDroppable } from '@dnd-kit/core';
+import { DndContext, closestCenter, useDroppable, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import SortableTask from './components/SortableTask';
 
+// ✅ Droppable Column Component
 const DroppableColumn = ({ columnId, tasks }: { columnId: string; tasks: string[] }) => {
   const { setNodeRef, isOver } = useDroppable({ id: columnId });
 
@@ -55,6 +56,7 @@ const DroppableColumn = ({ columnId, tasks }: { columnId: string; tasks: string[
   );
 };
 
+// ✅ Main App Component
 function App() {
   const [columns, setColumns] = useState({
     todo: ['Task 1', 'Task 2'],
@@ -63,8 +65,15 @@ function App() {
     done: ['Task 5'],
   });
 
+  const [activeId, setActiveId] = useState<string | null>(null); // 👈 Track dragged item
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
+    setActiveId(null);
 
     if (!over || active.id === over.id) return;
 
@@ -73,8 +82,6 @@ function App() {
 
     for (const colId in columns) {
       if (columns[colId].includes(active.id)) sourceColId = colId;
-
-      // Allow drop on empty column
       if (colId === over.id || columns[colId].includes(over.id)) destColId = colId;
     }
 
@@ -98,7 +105,6 @@ function App() {
       const taskIndex = sourceTasks.indexOf(active.id);
       const [movedTask] = sourceTasks.splice(taskIndex, 1);
 
-      // If dropped on a column (not on a task), push to end
       if (columns[destColId].includes(over.id)) {
         const destIndex = destTasks.indexOf(over.id);
         destTasks.splice(destIndex + 1, 0, movedTask);
@@ -122,12 +128,15 @@ function App() {
           Kanban Board
         </Typography>
 
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             {Object.entries(columns).map(([columnId, tasks]) => (
               <DroppableColumn key={columnId} columnId={columnId} tasks={tasks} />
             ))}
           </Box>
+
+          {/* ✅ Drag Overlay */}
+          <DragOverlay>{activeId ? <SortableTask id={activeId} task={activeId} /> : null}</DragOverlay>
         </DndContext>
       </Container>
     </>
